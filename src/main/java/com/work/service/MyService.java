@@ -1,9 +1,15 @@
 package com.work.service;
 
+import com.work.data.Employee;
+import com.work.data.Location;
 import com.work.data.Person;
 import com.work.data.PostNotes;
+import com.work.entities.DepartmentEntity;
+import com.work.entities.LocationEntity;
 import com.work.entities.NotesEntity;
 import com.work.entities.PersonEntity;
+import com.work.repository.DepartmentRepository;
+import com.work.repository.EmployeeRepository;
 import com.work.repository.NotesRepository;
 import com.work.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +28,12 @@ public class MyService {
 
     @Autowired
     NotesRepository notesRepository;
+
+    @Autowired
+    EmployeeRepository employeeRepository;
+
+    @Autowired
+    DepartmentRepository departmentRepository;
 
     public List<Person> getAllPersons() {
         List<PersonEntity> personList = personRepository.findAll();
@@ -77,5 +89,68 @@ public class MyService {
 
         });
         return notes;
+    }
+
+    public List<Employee> getAllEmployeesInDepartment(String departmentName) {
+        DepartmentEntity departmentEntity = departmentRepository.findByDepartmentName(departmentName);
+        if(departmentEntity == null) {
+            return new ArrayList<>();
+        }
+        return departmentEntity.getEmployees().stream().map(x -> {
+            Employee employee = new Employee();
+            employee.setId(x.getId());
+            employee.setFirstName(x.getFirstName());
+            employee.setMiddleName(x.getMiddleName());
+            employee.setLastName(x.getLastName());
+            employee.setEmail(x.getEmail());
+            employee.setPhoneNumber(x.getPhoneNumber());
+            employee.setJobId(x.getJobId());
+            employee.setSalary(x.getSalary());
+            employee.setDepartmentName(departmentName);
+
+            LocationEntity locationEntity  = departmentEntity.getLocation();
+            if(locationEntity != null) {
+                Location location = new Location();
+                location.setId(locationEntity.getId());
+                location.setStreetAddress(locationEntity.getStreetAddress());
+                location.setPostalCode(locationEntity.getPostalCode());
+                location.setCity(locationEntity.getCity());
+                location.setStateProvince(locationEntity.getStateProvince());
+                location.setCountryName(locationEntity.getCountryName());
+                employee.setLocation(location);
+            }
+            return employee;
+        }).collect(Collectors.toUnmodifiableList());
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll().stream().map(x -> {
+            Employee employee = new Employee();
+            employee.setId(x.getId());
+            employee.setFirstName(x.getFirstName());
+            employee.setMiddleName(x.getMiddleName());
+            employee.setLastName(x.getLastName());
+            employee.setEmail(x.getEmail());
+            employee.setPhoneNumber(x.getPhoneNumber());
+            employee.setJobId(x.getJobId());
+            employee.setSalary(x.getSalary());
+
+            DepartmentEntity dept = x.getDepartment();
+            if(dept != null) {
+                employee.setDepartmentName(dept.getDepartmentName());
+                LocationEntity locationEntity  = dept.getLocation();
+                if(locationEntity != null) {
+                    Location location = new Location();
+                    location.setId(locationEntity.getId());
+                    location.setStreetAddress(locationEntity.getStreetAddress());
+                    location.setPostalCode(locationEntity.getPostalCode());
+                    location.setCity(locationEntity.getCity());
+                    location.setStateProvince(locationEntity.getStateProvince());
+                    location.setCountryName(locationEntity.getCountryName());
+                    employee.setLocation(location);
+                }
+            }
+            return employee;
+        }).collect(Collectors.toUnmodifiableList());
     }
 }

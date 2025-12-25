@@ -20,7 +20,7 @@ public class PersonController {
     @Autowired
     MyService personService;
 
-    @GetMapping("/getPersons")
+    @GetMapping("/get-persons")
     public ResponseEntity<ApiResponse> getAllPerson() {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(personService.getAllPersons());
@@ -29,7 +29,7 @@ public class PersonController {
         return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/getPerson/{personId}")
+    @GetMapping("/get-person/{personId}")
     public ResponseEntity<ApiResponse> getPersonNotes(@PathVariable("personId") Long personId) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(new ArrayList());
@@ -39,11 +39,33 @@ public class PersonController {
         return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/getNotes/{id}")
+    @GetMapping("/get-notes/{id}")
     public ResponseEntity<ApiResponse> getNotes(@PathVariable("id") Long id) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setData(new ArrayList());
         apiResponse.getData().add(personService.getNotes(id));
+        apiResponse.setCode(MyConstants.SUCCESS_CODE);
+        apiResponse.setStatus(MyConstants.SUCCESS);
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-employees")
+    public ResponseEntity<ApiResponse> getAllEmployees() {
+        // Get all employees and their and their department names.
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(new ArrayList());
+        apiResponse.getData().add(personService.getAllEmployees());
+        apiResponse.setCode(MyConstants.SUCCESS_CODE);
+        apiResponse.setStatus(MyConstants.SUCCESS);
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-department/{deptName}")
+    public ResponseEntity<ApiResponse> getAllEmployeesInDepartment(@PathVariable("deptName") String deptName) {
+        // Get all employees and their and their department names.
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(new ArrayList());
+        apiResponse.getData().add(personService.getAllEmployeesInDepartment(deptName.trim().toUpperCase()));
         apiResponse.setCode(MyConstants.SUCCESS_CODE);
         apiResponse.setStatus(MyConstants.SUCCESS);
         return new ResponseEntity(apiResponse, HttpStatus.OK);
