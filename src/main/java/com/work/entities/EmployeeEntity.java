@@ -2,6 +2,7 @@ package com.work.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -30,8 +31,13 @@ public class EmployeeEntity {
     @Column(name = "salary")
     private Double salary;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", referencedColumnName = "department_id")
+    @ToString.Exclude
     private DepartmentEntity department;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<NotesEntity> notes;
 
 }

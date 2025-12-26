@@ -1,13 +1,16 @@
 package com.work.data;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class PostNotes {
-    private Long id;
+    private MultipartFile file;
     private String title;
-    private String body;
+    private String notes;
+    private Long id;
     private String url;
 
+    private Employee employee;
     private Person person;
 }

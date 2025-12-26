@@ -2,6 +2,7 @@ package com.work.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -23,8 +24,14 @@ public class NotesEntity {
     private String title;
     private String url;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id")
+    @ToString.Exclude
     private PersonEntity person;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    @ToString.Exclude
+    private EmployeeEntity employee;
 
 }

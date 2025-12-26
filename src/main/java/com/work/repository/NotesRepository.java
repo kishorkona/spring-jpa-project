@@ -11,4 +11,6 @@ import java.util.List;
 public interface NotesRepository extends JpaRepository<NotesEntity, Long> {
 
     List<NotesEntity> findByPersonId(Long personId);
+    List<NotesEntity> findByTitle(String title);
+    List<NotesEntity> findByTitleAndNotes(String title, String notes);
 }

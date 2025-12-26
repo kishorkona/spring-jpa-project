@@ -2,6 +2,7 @@ package com.work.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,6 +32,7 @@ public class PersonEntity {
 
     // Optional: for a bidirectional relationship
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private List<NotesEntity> notes;
 
 }

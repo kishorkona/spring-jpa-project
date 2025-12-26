@@ -63,7 +63,7 @@ public class MyService {
                 com.work.data.PostNotes postNotes = new com.work.data.PostNotes();
                 postNotes.setId(y.getId());
                 postNotes.setTitle(y.getTitle());
-                postNotes.setBody(y.getNotes());
+                postNotes.setNotes(y.getNotes());
                 postNotes.setUrl(y.getUrl());
                 return postNotes;
             }).collect(Collectors.toUnmodifiableList()));
@@ -76,17 +76,8 @@ public class MyService {
         notesRepository.findById(id).ifPresent(y -> {
             notes.setId(y.getId());
             notes.setTitle(y.getTitle());
-            notes.setBody(y.getNotes());
+            notes.setNotes(y.getNotes());
             notes.setUrl(y.getUrl());
-
-            Person person = new Person();
-            person.setId(y.getPerson().getId());
-            person.setFirstName(y.getPerson().getFirstName());
-            person.setLastName(y.getPerson().getLastName());
-            person.setEmail(y.getPerson().getEmail());
-            person.setAge(y.getPerson().getAge());
-            notes.setPerson(person);
-
         });
         return notes;
     }
