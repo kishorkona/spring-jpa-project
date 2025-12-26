@@ -60,6 +60,16 @@ public class PersonController {
         return new ResponseEntity(apiResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/get-employee/{name}")
+    public ResponseEntity<ApiResponse> getAllEmployeesByName(@PathVariable("name") String name) {
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setData(new ArrayList());
+        apiResponse.getData().add(personService.getAllEmployeeByName(name));
+        apiResponse.setCode(MyConstants.SUCCESS_CODE);
+        apiResponse.setStatus(MyConstants.SUCCESS);
+        return new ResponseEntity(apiResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/get-department/{deptName}")
     public ResponseEntity<ApiResponse> getAllEmployeesInDepartment(@PathVariable("deptName") String deptName) {
         // Get all employees and their and their department names.

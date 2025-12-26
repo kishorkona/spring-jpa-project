@@ -1,5 +1,6 @@
 package com.work.repository;
 
+import com.work.entities.DepartmentEntity;
 import com.work.entities.EmployeeEntity;
 import com.work.entities.NotesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
-
+    List<EmployeeEntity> findEmployeeByFirstName(String firstName);
 }

@@ -144,4 +144,35 @@ public class MyService {
             return employee;
         }).collect(Collectors.toUnmodifiableList());
     }
+
+    public List<Employee> getAllEmployeeByName(String name) {
+        return employeeRepository.findEmployeeByFirstName(name).stream().map(x -> {
+            Employee employee = new Employee();
+            employee.setId(x.getId());
+            employee.setFirstName(x.getFirstName());
+            employee.setMiddleName(x.getMiddleName());
+            employee.setLastName(x.getLastName());
+            employee.setEmail(x.getEmail());
+            employee.setPhoneNumber(x.getPhoneNumber());
+            employee.setJobId(x.getJobId());
+            employee.setSalary(x.getSalary());
+
+            DepartmentEntity dept = x.getDepartment();
+            if(dept != null) {
+                employee.setDepartmentName(dept.getDepartmentName());
+                LocationEntity locationEntity  = dept.getLocation();
+                if(locationEntity != null) {
+                    Location location = new Location();
+                    location.setId(locationEntity.getId());
+                    location.setStreetAddress(locationEntity.getStreetAddress());
+                    location.setPostalCode(locationEntity.getPostalCode());
+                    location.setCity(locationEntity.getCity());
+                    location.setStateProvince(locationEntity.getStateProvince());
+                    location.setCountryName(locationEntity.getCountryName());
+                    employee.setLocation(location);
+                }
+            }
+            return employee;
+        }).collect(Collectors.toUnmodifiableList());
+    }
 }

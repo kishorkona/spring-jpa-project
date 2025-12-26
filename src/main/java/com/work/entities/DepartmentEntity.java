@@ -20,7 +20,7 @@ public class DepartmentEntity {
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<EmployeeEntity> employees;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id", referencedColumnName = "location_id")
     private LocationEntity location;
 
