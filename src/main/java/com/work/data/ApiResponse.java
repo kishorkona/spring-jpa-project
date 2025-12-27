@@ -13,4 +13,5 @@ public class ApiResponse {
     private String status;
     private String message;
     private List data;
+    private Long rowsImpacted;
 }

@@ -4,15 +4,15 @@ import com.work.data.Employee;
 import com.work.data.Location;
 import com.work.data.Person;
 import com.work.data.PostNotes;
-import com.work.entities.DepartmentEntity;
-import com.work.entities.LocationEntity;
-import com.work.entities.NotesEntity;
-import com.work.entities.PersonEntity;
+import com.work.entities.*;
 import com.work.repository.DepartmentRepository;
 import com.work.repository.EmployeeRepository;
 import com.work.repository.NotesRepository;
 import com.work.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -145,8 +145,8 @@ public class MyService {
         }).collect(Collectors.toUnmodifiableList());
     }
 
-    public List<Employee> getAllEmployeeByName(String name) {
-        return employeeRepository.findEmployeeByFirstName(name).stream().map(x -> {
+    public List<Employee> getAllEmployeeByName(String firstName) {
+        return employeeRepository.findEmployeeByFirstName(firstName).stream().map(x -> {
             Employee employee = new Employee();
             employee.setId(x.getId());
             employee.setFirstName(x.getFirstName());
@@ -174,5 +174,57 @@ public class MyService {
             }
             return employee;
         }).collect(Collectors.toUnmodifiableList());
+    }
+
+    @CachePut(value = "employeeCache", key = "#employeeEntity.id")
+    public Employee createEmployee(Employee employee) {
+        EmployeeEntity employeeEntity = new EmployeeEntity();
+        employeeEntity.setFirstName(employee.getFirstName());
+        employeeEntity.setMiddleName(employee.getMiddleName());
+        employeeEntity.setLastName(employee.getLastName());
+        employeeEntity.setEmail(employee.getEmail());
+        employeeEntity.setPhoneNumber(employee.getPhoneNumber());
+        employeeEntity.setJobId(employee.getJobId());
+        employeeEntity.setSalary(employee.getSalary());
+        EmployeeEntity employeeEntityRslt = employeeRepository.save(employeeEntity);
+        employee.setId(employeeEntityRslt.getId());
+        return employee;
+    }
+
+    @CachePut(value = "employeeCache", key = "#employee.firstName + '_' + #employee.lastName")
+    public EmployeeEntity updateEmployee(Employee employee) {
+        EmployeeEntity existingEmployee = employeeRepository.findEmployeeByFirstNameAndLastName(employee.getFirstName(), employee.getLastName());
+        if(existingEmployee != null) {
+            existingEmployee.setMiddleName(employee.getMiddleName());
+            existingEmployee.setEmail(employee.getEmail());
+            existingEmployee.setPhoneNumber(employee.getPhoneNumber());
+            existingEmployee.setJobId(employee.getJobId());
+            existingEmployee.setSalary(employee.getSalary());
+            return employeeRepository.save(existingEmployee);
+        }
+        return null;
+    }
+
+    @Cacheable(value = "employeeCache", key = "#firstName + '_' + #lastName")
+    public Employee getAllEmployeeDetails(String firstName, String lastName) {
+        EmployeeEntity x = employeeRepository.findEmployeeByFirstNameAndLastName(firstName, lastName);
+        if(x != null) {
+            Employee employee = new Employee();
+            employee.setId(x.getId());
+            employee.setFirstName(x.getFirstName());
+            employee.setMiddleName(x.getMiddleName());
+            employee.setLastName(x.getLastName());
+            employee.setEmail(x.getEmail());
+            employee.setPhoneNumber(x.getPhoneNumber());
+            employee.setJobId(x.getJobId());
+            employee.setSalary(x.getSalary());
+            return employee;
+        }
+        return null;
+    }
+
+    @CacheEvict(value = "employeeCache", key = "#firstName + '_' + #lastName")
+    public void deleteEmployee(String firstName, String lastName) {
+        employeeRepository.deleteByFirstNameAndLastName(firstName, lastName);
     }
 }
